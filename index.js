@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const feed = require('feed-read');
+const http = require('http');
 
 const config = require('./config/main');
 
@@ -74,6 +75,21 @@ function getGreeting (date) {
   return greetings['other'];
 }
 
+function getWeather (cb) {
+  return http.get({
+    host: 'api.openweathermap.org',
+    path: '/data/2.5/weather?q=budapest&units=metric&appid=51614bd145a29735c6bc6f76bd81ece8'
+  }, res => {
+    var response = '';
+    res.on('data', d => {
+      response += d;
+    })
+    res.on('end', () => {
+      cb(JSON.parse(response));
+    })
+  })
+}
+
 app.get('/', (req, res) => {
   let d = new Date();
   // figure out the greeting
@@ -83,15 +99,18 @@ app.get('/', (req, res) => {
       feed('http://www.origo.hu/contentpartner/rss/sport/origo.xml', (err, articles2) => {
         if (err) res.json({success:false});
         else {
-          res.render('index', {
-            user: {
-              name: 'Bogyó',
-              thumbnail: 'thumbnail-cica.jpg'
-            },
-            greeting: getGreeting(d),
-            date: months[d.getMonth()] + ' ' + d.getDate(),
-            index_articles: articles,
-            origo_articles: articles2
+          getWeather(weather => {
+            res.render('index', {
+              user: {
+                name: 'Bogyó',
+                thumbnail: 'thumbnail-cica.jpg'
+              },
+              greeting: getGreeting(d),
+              date: months[d.getMonth()] + ' ' + d.getDate(),
+              index_articles: articles,
+              origo_articles: articles2,
+              weather: weather
+            })
           })
         }
       })
