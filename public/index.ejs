@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html data-ng-app="kisCicApp">
   <head>
     <meta charset="utf-8">
     <title>KisCicApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
     <link rel="stylesheet" href="./css/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="./js/app.js" charset="utf-8"></script>
   </head>
   <body>
     <div class="wrapper">
@@ -21,39 +23,9 @@
         </div>
       </section>
       <main class="main-content">
-        <section class="news-section">
-          <header class="section-header">
-            <img src="./img/news-cat.svg" alt="" class="cat-image">
-          </header>
-          <div class="section-articles">
-            <% for (let i = 0; i < 3; i++) { %>
-            <article class="section-article">
-              <h3><a href="<%= index_articles[i].link %>"><%= index_articles[i].title %></a></h3>
-              <p><%= index_articles[i].content %></p>
-            </article>
-            <% } %>
-          </div>
-        </section>
-        <section class="weather-section">
-          <div class="section-header">
-            <img src="./img/weather-cat.svg" alt="" class="cat-image">
-            <h1><%= weather.main.temp %> °C</h1>
-            <p><%= weather.name %></p>
-          </div>
-        </section>
-        <section class="news-section">
-          <header class="section-header">
-            <img src="./img/sports-cat.svg" alt="" class="cat-image">
-          </header>
-          <div class="section-articles">
-            <% for (let i = 0; i < 3; i++) { %>
-            <article class="section-article">
-              <h3><a href="<%= origo_articles[i].link %>"><%= origo_articles[i].title %></a></h3>
-              <p><%= origo_articles[i].content %></p>
-            </article>
-            <% } %>
-          </div>
-        </section>
+        <index-news></index-news>
+        <weather-component></weather-component>
+        <origo-news></origo-news>
         <footer class="bottom-footer">
           <b>Created by: Egy Tiglinc aki Szeret!</b>
         </footer>

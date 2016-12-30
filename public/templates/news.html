@@ -1,0 +1,14 @@
+<section class="news-section" data-ng-init="getArticles()">
+  <header data-ng-class="{'swapper-section' : categories, 'section-header' : true}">
+    <img data-ng-src="{{image}}" alt="" class="cat-image" data-ng-if="categories === false">
+    <div data-ng-class="{ 'swapper' : true, 'open' : isOpen }" data-ng-if="categories === true">
+      <img data-ng-src="{{cat.src}}" data-ng-repeat="cat in cats track by $index" data-ng-class="{ 'cat-image' : true, 'active' : $index === activeIndex }" data-ng-click="swapCat($index)">
+    </div>
+  </header>
+  <div class="section-articles">
+    <article class="section-article" data-ng-repeat="article in articles">
+      <h3><a data-ng-href="{{article.link}}">{{article.title}}</a></h3>
+      <p>{{article.content}}</p>
+    </article>
+  </div>
+</section>

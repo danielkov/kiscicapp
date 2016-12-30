@@ -75,10 +75,11 @@ function getGreeting (date) {
   return greetings['other'];
 }
 
-function getWeather (cb) {
+function getWeather (city, cb) {
+  let appId = '51614bd145a29735c6bc6f76bd81ece8';
   return http.get({
     host: 'api.openweathermap.org',
-    path: '/data/2.5/weather?q=budapest&units=metric&appid=51614bd145a29735c6bc6f76bd81ece8'
+    path: `/data/2.5/weather?q=${city}&units=metric&appid=${appId}`
   }, res => {
     var response = '';
     res.on('data', d => {
@@ -93,34 +94,46 @@ function getWeather (cb) {
 app.get('/', (req, res) => {
   let d = new Date();
   // figure out the greeting
-  feed('http://index.hu/24ora/rss/', (err, articles) => {
-    if (err) res.json({success:false});
-    else {
-      feed('http://www.origo.hu/contentpartner/rss/sport/origo.xml', (err, articles2) => {
-        if (err) res.json({success:false});
-        else {
-          getWeather(weather => {
-            res.render('index', {
-              user: {
-                name: 'Bogyó',
-                thumbnail: 'thumbnail-cica.jpg'
-              },
-              greeting: getGreeting(d),
-              date: months[d.getMonth()] + ' ' + d.getDate(),
-              index_articles: articles,
-              origo_articles: articles2,
-              weather: weather
-            })
-          })
-        }
-      })
-    }
-  })
+  let greeting = getGreeting(d);
+
+  res.render('index', {
+    user: {
+      name: 'Bogyó',
+      thumbnail: 'thumbnail-cica.jpg'
+    },
+    greeting: greeting,
+    date: months[d.getMonth()] + ' ' + d.getDate()
+  });
 
 });
 
 app.get('/api/indexhu', (req, res) => {
+  feed('http://index.hu/24ora/rss/', (err, articles) => {
+    if (err) res.json({success:false});
+    else {
+      res.json(articles);
+    }
+  })
+});
 
+app.get('/api/origohu/:cat', (req, res) => {
+  feed(`http://www.origo.hu/contentpartner/rss/${req.params.cat}/origo.xml`, (err, articles) => {
+    if (err) res.json({success:false});
+    else {
+      res.json(articles);
+    }
+  })
+});
+
+app.get('/api/weather/:city', (req, res) => {
+  getWeather(req.params.city, weather => {
+    if (!weather) res.json({success:false});
+    else {
+      res.json(weather);
+    }
+  })
 })
+
+
 
 app.listen(config.port);
